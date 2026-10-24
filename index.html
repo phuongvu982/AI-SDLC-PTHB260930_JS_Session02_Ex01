@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Màn hình tính tiền một dòng hàng và phiếu tạm tính của Rikkei Shop - Khóa học AI-SDLC">
+  <title>Rikkei Shop - Tính Tiền Dòng Hàng & Hóa Đơn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --bg: #0b1120;
+      --card-bg: rgba(30, 41, 59, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --input-bg: rgba(15, 23, 42, 0.7);
+      --input-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --accent: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary-glow);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #93c5fd;
+      margin-bottom: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .input-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .quick-samples {
+      margin-bottom: 24px;
+      padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 12px;
+      border: 1px dashed #334155;
+    }
+
+    .quick-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .sample-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sample-btn {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: #93c5fd;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .sample-btn:hover {
+      background: rgba(59, 130, 246, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-submit:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .result-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--card-border);
+      display: none;
+    }
+
+    .result-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .receipt-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #38bdf8;
+      word-break: break-all;
+    }
+
+    .error-box {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .nav-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #38bdf8;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2, .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand-badge">Rikkei Shop • Session 02 - Ex 01</div>
+      <h1>Màn Hình Tính Tiền Dòng Hàng</h1>
+      <p class="subtitle">Mô phỏng tính toán đơn giá, thuế VAT 8% và xuất phiếu thanh toán một dòng</p>
+    </header>
+
+    <div class="card">
+      <div class="quick-samples">
+        <div class="quick-title">⚡ Chọn dữ liệu kiểm tra nhanh:</div>
+        <div class="sample-tags">
+          <button type="button" class="sample-btn" id="btn-sample-1">Tai nghe Bluetooth (450k x 2)</button>
+          <button type="button" class="sample-btn" id="btn-sample-2">Bàn phím cơ (750k x 1)</button>
+          <button type="button" class="sample-btn" id="btn-sample-3">Lỗi: Đơn giá chữ "abc"</button>
+          <button type="button" class="sample-btn" id="btn-sample-4">Lỗi: Số lượng = 0</button>
+        </div>
+      </div>
+
+      <form id="calc-form">
+        <div class="form-group">
+          <label for="product-name">Tên sản phẩm</label>
+          <div class="input-wrapper">
+            <input type="text" id="product-name" placeholder="Ví dụ: Tai nghe Bluetooth" value=" Tai nghe Bluetooth " required />
+          </div>
+          <p class="input-hint">Hệ thống sẽ tự động cắt khoảng trắng thừa đầu cuối</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="unit-price">Đơn giá (VNĐ)</label>
+            <div class="input-wrapper">
+              <input type="text" id="unit-price" placeholder="Ví dụ: 450000" value="450000" required />
+            </div>
+            <p class="input-hint">Nhập số hoặc chuỗi số > 0</p>
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">Số lượng</label>
+            <div class="input-wrapper">
+              <input type="text" id="quantity" placeholder="Ví dụ: 2" value="2" required />
+            </div>
+            <p class="input-hint">Số nguyên từ 1 trở lên</p>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btn-calculate">Tính Tiền & Xuất Phiếu</button>
+      </form>
+
+      <div id="result-section" class="result-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Thành Tiền</div>
+            <div class="stat-value" id="display-subtotal">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Thuế VAT (8%)</div>
+            <div class="stat-value" id="display-vat">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tổng Cộng</div>
+            <div class="stat-value" id="display-total" style="color: #34d399;">-</div>
+          </div>
+        </div>
+
+        <label>Dòng phiếu in hóa đơn:</label>
+        <div class="receipt-box" id="display-receipt"></div>
+      </div>
+    </div>
+
+    <div class="footer-nav">
+      <a href="tests.html" class="nav-link" id="link-tests">
+        <span>🧪</span> Xem Báo Cáo Kiểm Thử Tự Động (11/11 Test Cases)
+      </a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById('calc-form');
+    const nameInput = document.getElementById('product-name');
+    const priceInput = document.getElementById('unit-price');
+    const qtyInput = document.getElementById('quantity');
+
+    const resultSection = document.getElementById('result-section');
+    const displaySubtotal = document.getElementById('display-subtotal');
+    const displayVat = document.getElementById('display-vat');
+    const displayTotal = document.getElementById('display-total');
+    const displayReceipt = document.getElementById('display-receipt');
+
+    function calculateAndRender() {
+      const name = nameInput.value;
+      const price = priceInput.value;
+      const qty = qtyInput.value;
+
+      const lineTotal = calcLineTotal(price, qty);
+      const receiptLine = buildReceiptLine(name, price, qty);
+
+      resultSection.classList.add('active');
+
+      if (lineTotal === null || receiptLine === "Dữ liệu dòng hàng không hợp lệ") {
+        displaySubtotal.textContent = "Không hợp lệ";
+        displayVat.textContent = "Không hợp lệ";
+        displayTotal.textContent = "Không hợp lệ";
+        displayReceipt.className = "receipt-box error-box";
+        displayReceipt.textContent = receiptLine;
+      } else {
+        const vat = calcVat(lineTotal);
+        const total = lineTotal + vat;
+
+        displaySubtotal.textContent = formatVnd(lineTotal);
+        displayVat.textContent = formatVnd(vat);
+        displayTotal.textContent = formatVnd(total);
+        displayReceipt.className = "receipt-box";
+        displayReceipt.textContent = receiptLine;
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      calculateAndRender();
+    });
+
+    // Quick samples buttons
+    document.getElementById('btn-sample-1').addEventListener('click', () => {
+      nameInput.value = " Tai nghe Bluetooth ";
+      priceInput.value = "450000";
+      qtyInput.value = "2";
+      calculateAndRender();
+    });
+
+    document.getElementById('btn-sample-2').addEventListener('click', () => {
+      nameInput.value = "  Bàn phím cơ DareU  ";
+      priceInput.value = "750000";
+      qtyInput.value = "1";
+      calculateAndRender();
+    });
+
+    document.getElementById('btn-sample-3').addEventListener('click', () => {
+      nameInput.value = "Áo thun";
+      priceInput.value = "abc";
+      qtyInput.value = "2";
+      calculateAndRender();
+    });
+
+    document.getElementById('btn-sample-4').addEventListener('click', () => {
+      nameInput.value = "Chuột gaming";
+      priceInput.value = "300000";
+      qtyInput.value = "0";
+      calculateAndRender();
+    });
+
+    // Initial run
+    calculateAndRender();
+  </script>
+</body>
+</html>
